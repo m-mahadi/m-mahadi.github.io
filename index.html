@@ -3,23 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Mahadi writes about AI, building software, and making Typi, an open source typewriter simulator and writing app for Windows, Markdown, and Obsidian." />
+  <meta name="author" content="Mahadi" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="https://m-mahadi.github.io/" />
 
-  <title>how is Mahadi</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Mahadi - AI, writing, and building software" />
+  <meta property="og:description" content="A personal site from Mahadi: AI, software, writing, and Typi, an open source typewriter simulator and writing app." />
+  <meta property="og:url" content="https://m-mahadi.github.io/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:creator" content="@m_mahadi__" />
+
+  <title>Mahadi - AI, writing, software, and Typi typewriter simulator</title>
 
   <style>
+    :root {
+      color-scheme: light;
+      --text: #151515;
+      --muted: #5d5d5d;
+      --line: #dddddd;
+      --link: #0645ad;
+      --paper: #fffdf9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      max-width: 760px;
+      max-width: 820px;
       margin: 40px auto;
-      padding: 0 18px;
+      padding: 0 18px 56px;
       font-family: Georgia, "Times New Roman", serif;
       font-size: 18px;
-      line-height: 1.6;
-      color: #111;
-      background: #fff;
+      line-height: 1.62;
+      color: var(--text);
+      background: var(--paper);
     }
 
     a {
-      color: #0645ad;
+      color: var(--link);
       text-decoration: none;
     }
 
@@ -28,81 +52,130 @@
     }
 
     header {
-      margin-bottom: 35px;
+      margin-bottom: 38px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
     }
 
-    header h1 {
-      font-size: 30px;
-      margin-bottom: 4px;
+    h1, h2, h3 {
       font-weight: normal;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: 38px;
+      margin: 0 0 8px;
+    }
+
+    h2 {
+      margin-top: 38px;
+      font-size: 27px;
+    }
+
+    h3 {
+      font-size: 22px;
+      margin-bottom: 4px;
     }
 
     nav a {
       margin-right: 14px;
     }
 
-    h2 {
-      margin-top: 35px;
-      font-size: 26px;
-      font-weight: normal;
+    .intro {
+      font-size: 20px;
     }
 
-    .post {
-      margin-bottom: 24px;
+    .muted, .date {
+      color: var(--muted);
     }
 
-    .date {
-      color: #666;
-      font-size: 15px;
-      margin-bottom: 2px;
-    }
-
-    .post h3 {
-      font-size: 23px;
-      margin: 0;
-      font-weight: normal;
+    .project, .post {
+      margin-bottom: 26px;
     }
 
     footer {
-      margin-top: 60px;
-      padding-top: 25px;
-      border-top: 1px solid #ddd;
+      margin-top: 56px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
       color: #333;
       font-size: 16px;
     }
 
-    footer ul {
-      padding-left: 20px;
+    ul {
+      padding-left: 22px;
     }
   </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Mahadi",
+    "url": "https://m-mahadi.github.io/",
+    "sameAs": [
+      "https://github.com/m-mahadi",
+      "https://x.com/m_mahadi__"
+    ],
+    "knowsAbout": ["AI", "software", "writing", "open source", "Obsidian", "Markdown"],
+    "description": "Mahadi writes about AI, building software, music, books, writing, video, and making open source tools."
+  }
+  </script>
 </head>
 
 <body>
   <header>
-    <h1><a href="/">how is Mahadi</a></h1>
-    <nav>
+    <h1>Mahadi</h1>
+    <p class="intro">I write, build software, learn AI in public, and work toward my first startup.</p>
+    <nav aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/typi.html">Typi</a>
       <a href="/about.html">About</a>
+      <a href="https://github.com/m-mahadi">GitHub</a>
+      <a href="https://x.com/m_mahadi__">X</a>
     </nav>
   </header>
 
   <main>
-    <h2>Posts</h2>
+    <section aria-labelledby="projects">
+      <h2 id="projects">Projects</h2>
 
-    <div class="post">
-      <div class="date">Jun 3, 2026</div>
-      <h3><a href="/posts/starting-before-ready.html">I’m Starting Before I’m Ready</a></h3>
-    </div>
+      <article class="project">
+        <h3><a href="/typi.html">Typi - an open source typewriter simulator and writing app</a></h3>
+        <p>
+          Typi is a focused Windows typewriter simulator and writing desk that blocks paste, plays typewriter sounds,
+          autosaves Markdown notes, and opens them directly in an Obsidian vault. It is for people who want to write from scratch instead of
+          dumping copied text into another notes app.
+        </p>
+        <p>
+          <a href="https://github.com/m-mahadi/typi">Source code</a>
+          <span class="muted">/</span>
+          <a href="https://github.com/m-mahadi/typi/releases/latest">Download the Windows installer</a>
+        </p>
+      </article>
+    </section>
 
+    <section aria-labelledby="notes">
+      <h2 id="notes">Notes</h2>
+
+      <article class="post">
+        <div class="date">June 3, 2026</div>
+        <h3><a href="/posts/starting-before-ready.html">I am starting before I am ready</a></h3>
+        <p class="muted">A short note on building in public, AI, taste, and getting over the embarrassment of beginning.</p>
+      </article>
+    </section>
+
+    <section aria-labelledby="interests">
+      <h2 id="interests">What I am into</h2>
+      <p>
+        AI, software, writing, reading, music, crochet, card magic, and making videos. The common thread is making things,
+        learning in public, and trying to become useful without sanding off the weird parts.
+      </p>
+    </section>
   </main>
 
   <footer>
-    <h2>how is Mahadi</h2>
-    <ul>
-      <li>momahadi9664@gmail.com</li>
-      <li><a href="https://github.com/m-mahadi">github</a></li>
-    </ul>
-
-    <p>A home for notes from an overthinking entrepreneur.</p>
+    <p>Contact: <a href="mailto:momahadi9664@gmail.com">momahadi9664@gmail.com</a></p>
+    <p>Also on <a href="https://github.com/m-mahadi">GitHub</a> and <a href="https://x.com/m_mahadi__">X</a>.</p>
   </footer>
 </body>
 </html>

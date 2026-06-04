@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Typi is an open source typewriter simulator and typewriter writing app for Windows, Markdown, and Obsidian. It blocks paste, autosaves notes, and helps you write from scratch." />
+  <meta name="author" content="Mahadi" />
+  <meta name="robots" content="index, follow, max-image-preview:large" />
+  <link rel="canonical" href="https://m-mahadi.github.io/typi.html" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Typi - open source typewriter simulator and writing app" />
+  <meta property="og:description" content="A focused Windows typewriter simulator and typewriter writing app that blocks paste, autosaves Markdown, and opens notes directly in Obsidian." />
+  <meta property="og:url" content="https://m-mahadi.github.io/typi.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:creator" content="@m_mahadi__" />
+
+  <title>Typi - open source typewriter simulator and writing app for Windows</title>
+
+  <style>
+    :root {
+      --text: #141414;
+      --muted: #5f5f5f;
+      --line: #d8d8d8;
+      --link: #0645ad;
+      --paper: #fffdf9;
+      --accent: #7f2e25;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      max-width: 860px;
+      margin: 40px auto;
+      padding: 0 18px 56px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      line-height: 1.62;
+      color: var(--text);
+      background: var(--paper);
+    }
+
+    a {
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    header {
+      margin-bottom: 36px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+    }
+
+    h1, h2, h3 {
+      font-weight: normal;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: 42px;
+      margin: 0 0 10px;
+    }
+
+    h2 {
+      margin-top: 38px;
+      font-size: 27px;
+    }
+
+    nav a {
+      margin-right: 14px;
+    }
+
+    .intro {
+      font-size: 21px;
+      max-width: 760px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 24px 0;
+    }
+
+    .button {
+      display: inline-block;
+      border: 1px solid var(--accent);
+      color: #fff;
+      background: var(--accent);
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+    }
+
+    .button.secondary {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .button:hover {
+      text-decoration: none;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .feature-list li {
+      margin-bottom: 8px;
+    }
+
+    footer {
+      margin-top: 56px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line);
+      color: #333;
+      font-size: 16px;
+    }
+  </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Typi",
+    "applicationCategory": "WritingApplication",
+    "operatingSystem": "Windows",
+    "softwareHelp": "https://github.com/m-mahadi/typi",
+    "downloadUrl": "https://github.com/m-mahadi/typi/releases/latest",
+    "codeRepository": "https://github.com/m-mahadi/typi",
+    "license": "https://github.com/m-mahadi/typi/blob/main/LICENSE",
+    "author": {
+      "@type": "Person",
+      "name": "Mahadi",
+      "url": "https://m-mahadi.github.io/"
+    },
+    "description": "Typi is an open source typewriter simulator and typewriter writing app for Windows, Markdown, and Obsidian. It blocks paste, autosaves Markdown notes, and helps people write from scratch.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+</head>
+
+<body>
+  <header>
+    <p><a href="/">back home</a></p>
+    <h1>Typi</h1>
+    <p class="intro">
+      Typi is an open source typewriter simulator and typewriter writing app for Windows and Obsidian. It is built for focused writing:
+      no paste, no dumping, just typing your own words into Markdown notes.
+    </p>
+    <nav aria-label="Typi links">
+      <a href="https://github.com/m-mahadi/typi">GitHub</a>
+      <a href="https://github.com/m-mahadi/typi/releases/latest">Download</a>
+      <a href="https://github.com/m-mahadi/typi/blob/main/LICENSE">MIT License</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="actions">
+      <a class="button" href="https://github.com/m-mahadi/typi/releases/latest">Download Typi for Windows</a>
+      <a class="button secondary" href="https://github.com/m-mahadi/typi">View source code</a>
+    </div>
+
+    <section aria-labelledby="why">
+      <h2 id="why">Why it exists</h2>
+      <p>
+        A lot of writing apps make it easy to collect text. Typi is typewriter software for the opposite moment:
+        when you want to sit down, write slowly, and actually produce a note yourself. It works as typewriter
+        simulator software with a typewriter-style interface, local key sounds, and simple Markdown files so the
+        writing stays yours and the files stay portable.
+      </p>
+    </section>
+
+    <section aria-labelledby="features">
+      <h2 id="features">What Typi does</h2>
+      <ul class="feature-list">
+        <li>Blocks paste and drag-drop input so the app stays a place for writing from scratch.</li>
+        <li>Autosaves the current sheet into a local Typi vault while you write.</li>
+        <li>Saves notes as Markdown in <code>Typi Notes/</code>.</li>
+        <li>Opens the active note directly in Obsidian.</li>
+        <li>Lets you choose where your vault lives, including a local drive outside OneDrive.</li>
+        <li>Works even without Obsidian because the files are plain Markdown.</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="search-terms">
+      <h2 id="search-terms">Useful searches</h2>
+      <p>
+        People looking for typewriter simulator software, a typewriter writing app, a Windows typewriter app,
+        an Obsidian writing app, a Markdown typewriter app, a paste-free writing tool, or an open source focused
+        writing app should be able to understand what Typi is from this page.
+      </p>
+    </section>
+
+    <section aria-labelledby="install">
+      <h2 id="install">Install</h2>
+      <p>
+        Download the latest Windows installer from GitHub Releases. Typi is open source under the MIT License.
+      </p>
+      <p>
+        <a href="https://github.com/m-mahadi/typi/releases/latest">Get the latest Typi installer</a>
+        <span class="muted">or</span>
+        <a href="https://github.com/m-mahadi/typi">read the source code on GitHub</a>.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Made by <a href="/">Mahadi</a>. Follow updates on <a href="https://x.com/m_mahadi__">X</a>.</p>
+  </footer>
+</body>
+</html>
