@@ -89,8 +89,23 @@
       color: var(--muted);
     }
 
-    .project, .post {
+    .post {
       margin-bottom: 26px;
+    }
+
+    .project {
+      margin-bottom: 12px;
+      font-size: 16px;
+      color: var(--muted);
+    }
+
+    .project h3 {
+      font-size: 18px;
+      margin: 0 0 2px;
+    }
+
+    .project p {
+      margin: 4px 0;
     }
 
     footer {
@@ -136,24 +151,6 @@
   </header>
 
   <main>
-    <section aria-labelledby="projects">
-      <h2 id="projects">Projects</h2>
-
-      <article class="project">
-        <h3><a href="/typi.html">Typi - an open source typewriter simulator and writing app</a></h3>
-        <p>
-          Typi is a focused Windows typewriter simulator and writing desk that blocks paste, plays typewriter sounds,
-          autosaves Markdown notes, and opens them directly in an Obsidian vault. It is for people who want to write from scratch instead of
-          dumping copied text into another notes app.
-        </p>
-        <p>
-          <a href="https://github.com/m-mahadi/typi">Source code</a>
-          <span class="muted">/</span>
-          <a href="https://github.com/m-mahadi/typi/releases/latest">Download the Windows installer</a>
-        </p>
-      </article>
-    </section>
-
     <section aria-labelledby="notes">
       <h2 id="notes">Notes</h2>
 
@@ -170,6 +167,20 @@
         AI, software, writing, reading, music, crochet, card magic, and making videos. The common thread is making things,
         learning in public, and trying to become useful without sanding off the weird parts.
       </p>
+    </section>
+
+    <section aria-labelledby="projects">
+      <h2 id="projects">Projects</h2>
+
+      <article class="project">
+        <h3><a href="/typi.html">Typi</a></h3>
+        <p>Open source typewriter simulator and writing app for Windows, Markdown, and Obsidian.</p>
+        <p>
+          <a href="https://github.com/m-mahadi/typi">Source</a>
+          <span class="muted">/</span>
+          <a href="https://github.com/m-mahadi/typi/releases/latest">Download</a>
+        </p>
+      </article>
     </section>
   </main>
 
