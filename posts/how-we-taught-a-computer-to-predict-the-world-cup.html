@@ -3,21 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="An honest World Cup prediction model: where ratings, home advantage, xG, and luck worked, and where penalty shootouts laughed at us." />
+  <meta name="description" content="A first-person, fully reproducible World Cup prediction model: ratings, squads, xG, validation, knockouts, and the exact wall where luck takes over." />
   <meta name="author" content="Mahadi" />
   <meta name="robots" content="index, follow, max-image-preview:large" />
   <link rel="canonical" href="https://m-mahadi.github.io/posts/how-we-taught-a-computer-to-predict-the-world-cup.html" />
 
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="How we taught a computer to predict the World Cup — and where it hit a wall" />
-  <meta property="og:description" content="An honest World Cup prediction model: where ratings, home advantage, xG, and luck worked, and where penalty shootouts laughed at us." />
+  <meta property="og:title" content="I tried to predict the World Cup. The interesting part was where it stopped working." />
+  <meta property="og:description" content="A first-person, fully reproducible World Cup prediction model: ratings, squads, xG, validation, knockouts, and the exact wall where luck takes over." />
   <meta property="og:url" content="https://m-mahadi.github.io/posts/how-we-taught-a-computer-to-predict-the-world-cup.html" />
   <meta property="og:image" content="https://m-mahadi.github.io/assets/worldcup-ml/predicted_bracket.svg" />
   <meta property="article:published_time" content="2026-07-07" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:creator" content="@m_mahadi__" />
 
-  <title>How we taught a computer to predict the World Cup — and where it hit a wall | how is Mahadi</title>
+  <title>I tried to predict the World Cup. The interesting part was where it stopped working. | how is Mahadi</title>
 
   <style>
     body {
@@ -53,6 +53,17 @@
     p { margin: 0 0 18px; }
     ul { padding-left: 22px; margin: 0 0 20px; }
     li { margin-bottom: 8px; }
+    code { font-family: Consolas, "Liberation Mono", monospace; font-size: 0.92em; }
+
+    pre {
+      overflow-x: auto;
+      margin: 22px 0 26px;
+      padding: 14px 16px;
+      border: 1px solid #e3dfd6;
+      background: #fff8ec;
+      font-size: 15px;
+      line-height: 1.45;
+    }
 
     figure { margin: 34px 0; }
     figure img {
@@ -64,14 +75,6 @@
     }
     figcaption { color: #666; font-size: 14px; line-height: 1.4; margin-top: 8px; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 24px 0 28px;
-      font-size: 17px;
-    }
-    th, td { border-bottom: 1px solid #ddd; padding: 8px 0; text-align: left; }
-    .num { text-align: right; }
     hr { border: 0; border-top: 1px solid #ddd; margin: 34px 0; }
     .source-link { margin-top: 28px; font-size: 16px; color: #555; }
   </style>
@@ -80,8 +83,8 @@
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    "headline": "How we taught a computer to predict the World Cup — and where it hit a wall",
-    "description": "An honest World Cup prediction model: where ratings, home advantage, xG, and luck worked, and where penalty shootouts laughed at us.",
+    "headline": "I tried to predict the World Cup. The interesting part was where it stopped working.",
+    "description": "A first-person, fully reproducible World Cup prediction model: ratings, squads, xG, validation, knockouts, and the exact wall where luck takes over.",
     "datePublished": "2026-07-07",
     "author": { "@type": "Person", "name": "Mahadi" },
     "image": "https://m-mahadi.github.io/assets/worldcup-ml/predicted_bracket.svg",
@@ -95,71 +98,162 @@
 
   <article>
     <p class="date">July 7, 2026</p>
-    <h1>How we taught a computer to predict the World Cup — and where it hit a wall</h1>
-    <p class="dek">An honest World Cup prediction model: where ratings, home advantage, xG, and luck worked, and where penalty shootouts laughed at us.</p>
+    <h1>I tried to predict the World Cup. The interesting part was where it stopped working.</h1>
+    <p class="dek">A first-person, fully reproducible World Cup prediction model: ratings, squads, xG, validation, knockouts, and the exact wall where luck takes over.</p>
 
-    <p>There's a fun question hiding inside &quot;can a machine predict football.&quot; It's really this: how much of a football match is skill, and how much is luck? Build an honest predictor, push it as hard as it will go, and the exact spot where it stops improving tells you where luck takes over. That turned out to be the best part of the whole project. Let me walk you through what we built, in plain words, with the real numbers.</p>
-    <h2>The one-sentence version of the model</h2>
-    <p>For any two teams, ask one thing: who is better right now? Turn the answer into three numbers, the chance team A wins, the chance of a draw, the chance team B wins, and pick the biggest. That's it. Everything else in this post is us arguing about how to measure &quot;better,&quot; and being honest about when &quot;better&quot; still isn't enough to know who wins.</p>
-    <h2>First, a wall we couldn't climb (and shouldn't have tried to)</h2>
-    <p>We replayed all 72 group-stage matches, none of which the model had ever seen, and asked it to call each one. It got <strong>64%</strong> right. We tried harder features, more data, cleverer math. It stayed around 64%.</p>
-    <p>Here's why, and it's the whole point of the project. Of those 72 matches, <strong>20 ended in a draw</strong>. More than one in four. On those 20 draws, the model's average guess for &quot;draw&quot; was only <strong>17%</strong>, while it was busy backing a winner at <strong>66%</strong>. The model wasn't broken. Draws are just close to random. When two even teams play, a draw is the most likely single result, yet the model almost never picks it, because the two teams keep splitting the odds between them and neither &quot;draw&quot; pile ever wins.</p>
-    <p>Here's the number that settles it. Professional bookmakers, with billions of dollars riding on getting this right, hit about <strong>53–55%</strong> on match outcomes. Our 64% is genuinely good. So when someone tells you their model is 90% accurate at picking match winners, they are either fooling themselves or feeding it the answer. I'll show you exactly what that cheating looks like at the end.</p>
-    <p>So we stopped trying to win every match, and asked a better question.</p>
-    <h2>The question that <em>can</em> be answered: who advances?</h2>
-    <p>Predicting one match is a coin weighted 60/40. But predicting who <em>wins a group</em> of four teams — that's three matches, and luck starts to cancel out. A strong team might draw one game and still top the group. This is a question where being right is actually possible.</p>
-    <p>And here's the humbling part. We built a fancy machine-learning model. Then we tried the dumbest thing imaginable: rank each group by one number, the team's current strength rating, and call the top team the winner. <strong>The dumb version got 11 of 12 group winners.</strong> The fancy model didn't beat it. When your one-line baseline matches your clever model, the baseline is the real story. For &quot;who's the better team,&quot; a good rating already knows almost everything.</p>
-    <p>The one group it got wrong was Group D. The model said Turkey. The <strong>USA</strong> won it. Why did it miss? Because the rating couldn't see that the USA were playing at home.</p>
-    <h2>Home advantage isn't a light switch — it's a dimmer</h2>
-    <p>Now, a World Cup has no &quot;home team&quot; in the usual sense — every match is at a neutral stadium. (This tripped up our first model, which secretly gave a bonus to whichever team was listed first in the fixture. That's not home advantage, that's alphabet soup. We ripped it out.)</p>
-    <p>But 2026 is in the USA, Canada, and Mexico, so some teams are more at home than others. Mexico playing in Guadalajara has 80,000 fans, no jet lag, and familiar heat. Australia playing in New York has flown 15,000 km into a strange time zone. So we made home advantage a dimmer instead of a switch. A team gets the full bonus in its own country, and a slice of it that fades with the distance it had to travel.</p>
-    <p>The bonus, in rating points, came out about like you'd hope. Mexico got 80. The USA and Canada got 95 at home. Haiti, Colombia, and Panama landed around 30 to 45, since they're close by with big travelling crowds and a similar climate. Argentina got 5, Japan 3, and Australia just 1, flown in from the far side of the planet. Add that dimmer back in and the USA edge past Turkey. <strong>Now the model calls all 12 group winners. 100%.</strong> The only thing between the rating and a perfect dozen was remembering who's playing at home.</p>
-    <h2>Then the knockouts started — so we tried to predict them blind</h2>
-    <p>Here's where it got genuinely exciting, because now we could test the model against a future it truly hadn't seen. We froze its knowledge at the end of the group stage and made it predict the entire knockout bracket — Round of 32 all the way to the final — without peeking at a single knockout result.</p>
-    <p>Round of 32: <strong>14 out of 16 correct.</strong></p>
-    <p>And look at the two it missed. Germany lost to Paraguay. The Netherlands lost to Morocco. Both went to <strong>penalty shootouts</strong>. A shootout is a coin flip that happens to involve feet, and no model on Earth should claim to call one. Of the 14 ties decided in normal time by the better team, the model got all 14. That's not luck. That's the ceiling.</p>
-    <h2>The upgrade you asked for: judge teams by <em>how they played</em>, not just the score</h2>
-    <p>A scoreline lies. A team can play brilliantly and lose to one deflected goal in stoppage time. Another can get outshot 20-to-3 and nick a 1-0. If you rate teams on results alone, you're rating them partly on luck. So we fed the model three richer signals.</p>
-    <p><strong>Expected goals (xG).</strong> This is the big one. xG asks: given the quality of the chances a team created, how many goals <em>should</em> they have scored? It's the closest thing football has to measuring who deserved to win. We pulled the real xG for all 94 matches.</p>
-    <p>It immediately told us things the scoreboard hid. Egypt finished the group stage with a +2 goal difference, which looks good, but their xG difference was <strong>−0.8</strong>. The chances they gave up were worse than the chances they made. They'd been a little lucky. Norway were the opposite. Their results looked ordinary, but their xG was strong, so they were better than they looked. And here's the payoff. When Norway later knocked Brazil out, the xG wasn't surprised. It had been quietly saying Norway were underrated the whole time.</p>
-    <p><strong>The manner of the result.</strong> Losing to a 93rd-minute winner means you were level for 92 minutes. You played well. So we read the goal minutes and gave a team that only lost in the dying seconds most of the credit of a draw. Getting beaten late and getting battered should not count the same.</p>
-    <p><strong>Momentum.</strong> A team that loses its opener but wins games two and three is rounding into form, and that's more dangerous than a team that started hot and faded. So the third group game counts for more than the first.</p>
-    <p><strong>Squad quality.</strong> This is the &quot;how good are these players, really&quot; signal, and it doesn't care about one noisy group. We measured it from the players' club form. A team built from top clubs is strong even if it stumbled for three games.</p>
-    <p>Fold all of that in and the blind Round of 32 climbs to <strong>14 of 16</strong>. The only two misses, you guessed it, were the penalty shootouts. Egypt beating Australia flipped to correct, because Egypt's players come from better clubs than their raw rating knew. The quality signals paid for themselves.</p>
-    <h2>Rolling it forward, one round at a time</h2>
-    <p>As the tournament moved on, we moved the cutoff with it. Use everything through the Round of 32; predict the Round of 16 blind. Then use everything through the Round of 16; predict the rest.</p>
-    <ul>
-      <li>Groups → Round of 32: <strong>14/16</strong></li>
-      <li>Round of 32 → Round of 16: <strong>5/6</strong></li>
-      <li><strong>Total, predicting each round from the one before: 19 of 22 — 86%.</strong></li>
-    </ul>
-    <p>The three misses across the whole knockout stage were two penalty shootouts and one honest on-the-day upset, Norway beating Brazil in normal time. And here's a small win for the xG idea. Morocco actually outplayed the Netherlands on chances, 1.38 xG to 0.24, even while scraping through on penalties. So the model rated Morocco up, and then correctly picked them to beat Canada in the next round.</p>
+    <p>Everyone builds a World Cup predictor. They pick a champion, post it, and move on. It is easy, and it is mostly a lie.</p>
+    <p>I wanted the honest version. Build the best predictor I can. Push it until it stops getting better. Then look hard at the exact spot where it stopped.</p>
+    <p>Because that spot tells you something real. It tells you where football stops being about who is the better team, and starts being about luck.</p>
+    <p>This is the whole thing. Every model I used. Every number I fed it. Every weight I picked. What worked, what embarrassed me, and where the wall is.</p>
+    <p>It is long. That is on purpose.</p>
+    <h2>The whole model is one question</h2>
+    <p>The model asks one thing, over and over. Who is better right now, and by how much?</p>
+    <p>That is it. Everything below is me arguing with myself about how to measure &quot;better.&quot; And being honest about the moments when knowing who is better is still not enough to know who wins.</p>
+    <p>I keep three questions separate the whole way through, because they are not equally answerable:</p>
+    <p>Who wins a single match. Who wins a group. Who advances through the knockouts.</p>
+    <p>The first is the hardest. One match is where luck lives. The last two are easier, because they add up several matches and luck starts to cancel out. Hold on to that idea. It comes back.</p>
+    <h2>First I built a memory</h2>
+    <p>You cannot predict anything without a memory. So I built one.</p>
+    <p>I took every international match ever recorded. From 1872 to today. That is 49,503 games. Who played, the score, the competition, and whether it was on neutral ground.</p>
+    <p>This is the backbone. It is where raw team strength comes from. And it already holds the games that matter: the last African Cup of Nations, Euro 2024, the Nations League, Copa América, every World Cup qualifier. 4,666 competitive games since 2022 alone.</p>
+    <p>Then I added a few more things.</p>
+    <p>Current strength ratings for all 244 countries, pulled from a public Elo site. Ratings for 464 clubs, so I could measure how good a squad is from where its players play their club football. The official squad lists, 1,248 players. And the big one for later: expected goals for all 94 World Cup matches played so far.</p>
+    <p>One boring but honest note. The Python I was running had a broken security stack that crashed on every web request. So I pulled some of this through PowerShell instead. Real data work is thirty percent plumbing.</p>
+    <h2>The rating</h2>
+    <p>The strength backbone is an Elo rating. It is the same idea as chess ranking.</p>
+    <p>Every team starts at 1500 points. You beat someone, you take points off them. Beat a team far above you, you take a lot. Beat a minnow, you take almost nothing. Lose, and you hand points over the same way.</p>
+    <p>The math is one line. The chance team A wins is:</p>
+    <pre><code>1 / (1 + 10^((rating_B − rating_A) / 400))</code></pre>
+    <p>After the match you move the rating by <code>K × (what happened − what was expected)</code>. <code>K</code> is how big the swing is.</p>
+    <p>Here is the part people get lazy about. Not every match should count the same. A friendly is not a knockout final. Teams rest players in friendlies. They experiment. They do not care. So I set <code>K</code> by how much the game mattered:</p>
+    <pre><code>World Cup final game        55
+Euro / Copa / AFCON final    45
+Nations League, qualifiers   35
+other competitive            25
+friendly                     15</code></pre>
+    <p>I also made a bigger scoreline count for more. A 4-0 says more than a 1-0.</p>
+    <p>That Nations League line actually mattered. In my first version those games fell into the &quot;other&quot; bucket and got under-counted. That quietly threw away 600 recent, serious matches. Fixing it made the ratings sharper.</p>
+    <h2>The first model, and the wall</h2>
+    <p>On top of the rating I built a small predictor. It looks at the rating gap and recent form and spits out three numbers. Chance of a win, a draw, a loss. It picks the biggest.</p>
+    <p>I trained it, then replayed all 72 group matches it had never seen, and made it call every one.</p>
+    <p>It got 64 percent right.</p>
+    <p>Then I threw everything at it. More features. More data. Cleverer math.</p>
+    <p>It stayed at 64 percent.</p>
+    <p>So I stopped and looked at the games it got wrong. Almost all of them were draws.</p>
+    <p>Here is the problem with a draw. Of those 72 group games, 20 ended level. More than one in four. And on those exact 20 games, the model's average guess for &quot;draw&quot; was 17 percent. It was busy backing a winner at 66 percent.</p>
+    <p>The model was not broken. Draws are just close to random.</p>
+    <p>Think about why. When two even teams play, a draw is the single most likely result. But the model almost never picks it. Why? Because the two teams keep splitting the odds between them. Team A gets 40, team B gets 40, the draw gets 20. The draw never wins the vote, even when it is the smart bet.</p>
+    <p>You cannot know in advance which even game ends level. It comes down to a deflection. A flag. A keeper having a good day.</p>
+    <p>Is 64 percent even good? Yes. Bookmakers, with billions of dollars on the line, land around 53 to 55 percent on match results. So 64 is strong.</p>
+    <p>Which means something. Anyone who shows you a model that is &quot;92 percent accurate at picking match winners&quot; is either fooling themselves or feeding it the answer. I will prove that at the end by doing it on purpose.</p>
+    <p>So I stopped trying to win every match. I asked a question that can actually be answered.</p>
+    <h2>Who wins the group</h2>
+    <p>One match is a weighted coin. But who wins a group of four teams is three matches. Luck starts to cancel. A strong team can draw one game and still finish top.</p>
+    <p>And here football humbled me.</p>
+    <p>I had built this whole machine-learning thing. Out of curiosity I tried the dumbest possible version. Rank each group by one number, the current strength rating. Call the top team the winner. No learning. No features. One column, sorted.</p>
+    <p>It got 11 of 12 group winners.</p>
+    <p>My clever model did not beat it.</p>
+    <p>That is a lesson you only learn by measuring. When your one-line shortcut matches your fancy model, the shortcut is the real story. For &quot;who is the better team,&quot; a good rating already knows almost everything. The machine learning was just decorating a signal that was already there.</p>
+    <p>The one group the rating missed was Group D. It said Turkey. The USA won it. And the reason it missed is the next piece.</p>
+    <h2>There is no home team, but there is a home</h2>
+    <p>A World Cup has no home team. Every game is at a neutral stadium. My first model did not know that. It was secretly giving a bonus to whichever team got listed first in the fixture. That is not home advantage. That is alphabetical luck.</p>
+    <p>So I fixed it. I made the model symmetric. Swap the two teams, and the only thing that changes is which win probability is which. The draw does not move.</p>
+    <p>But then I noticed something. 2026 is hosted by the USA, Canada, and Mexico. So &quot;neutral&quot; is not the same for everyone.</p>
+    <p>Mexico playing in Guadalajara has 80,000 screaming fans. No jet lag. Familiar heat. Australia playing in New York flew 15,000 kilometers into a strange time zone to play in front of no one. Calling those two the same is silly.</p>
+    <p>So I made home advantage a dimmer, not a switch. Full bonus in your own country. A slice of it for everyone else, and the slice shrinks with how far they had to travel:</p>
+    <pre><code>home bonus = 95 points          if it is your own country
+           = 95 × exp(−distance / 3000 km)   otherwise</code></pre>
+    <p>I looked up the coordinates of all 16 host cities and all 48 countries and measured the real distance. Here is what came out, in rating points:</p>
+    <pre><code>USA, Canada, Mexico (home)     95
+Mexico (across its venues)     ~80
+Haiti, Colombia, Panama        27 to 44
+Brazil, England, Morocco       12 to 14
+Argentina 5   Japan 3   Australia 1</code></pre>
+    <p>I did not tune those. That is just geography. Nearby teams with big travelling crowds get a real push. Teams flown in from the other side of the planet get almost nothing.</p>
+    <p>Add the dimmer back in, and the USA edge past Turkey.</p>
+    <p>Now the rating calls all 12 group winners. All of them. The only thing between a good rating and a perfect dozen was remembering who is playing at home.</p>
+    <h2>A better model: count the goals</h2>
+    <p>Picking win, draw, or loss is crude. What I really want is to guess how many goals each team scores. Because if I can do that, draws fall out on their own, and I can simulate whole scorelines.</p>
+    <p>So I switched to counting goals.</p>
+    <p>Every team gets an attack number and a defence number. The goals a team is expected to score is:</p>
+    <pre><code>expected goals = exp( base + your attack − their defence + home )</code></pre>
+    <p>Then I treat goals like a Poisson process. That is just the math for &quot;rare events that happen at some average rate.&quot; If a team is expected to score 1.6, this gives me the chance they score exactly 0, exactly 1, exactly 2, and so on. Do that for both teams, multiply, and I have the chance of every final score. Add up the scores where team A wins, where it is level, where team B wins. Now the draw is a real number the model computes, instead of a thing it ignores.</p>
+    <p>I found the attack and defence numbers by trial and improvement. Start everyone at zero. Guess the goals. Compare to what really happened. Nudge each team's numbers toward the truth. Do it a few hundred times until it settles. The nudge is simple: expected goals minus real goals.</p>
+    <p>Two things I weighted on purpose here.</p>
+    <p>Recent games count more. A match from six years ago should not weigh as much as one from this year. So each game's weight halves every two and a half years.</p>
+    <p>And I mixed in that current national rating. The from-scratch attack and defence is shaky for teams that rarely play the big nations. So I pull each team's expected goals toward the rating gap between them. This one blend does a lot of work. On its own, the raw goals model got 7 of 12 group winners. With the rating mixed in, it jumped to 11 or 12.</p>
+    <p>The rating is the engine. The goals model is the car built around it.</p>
+    <h2>Using the group stage: how they played, not just who won</h2>
+    <p>When the group stage finished, I had new information. The lazy move is to just read the table. Points and goal difference. But the table throws away most of what happened. I graded each result four ways.</p>
+    <p>Who they played. This one is free, because the rating already handles it. Drawing Brazil pushes you up. Beating a minnow does not. Morocco drew Brazil in their first game, and the rating knew that was a strong result even though it was only a draw.</p>
+    <p>When they played their good games. A team that loses its first match and wins the next two is rounding into form. That is more dangerous than a team that started hot and faded. So I weighted the three group games by when they happened: first game 0.6, second game 1.0, third game 1.6. A bad opener hurts less. A strong finish counts more. Paraguay got hammered 1-4, but that was their first game, so it got discounted.</p>
+    <p>How they lost. Losing to a goal in the 93rd minute means you were level for 92 minutes. You played fine. So I read the goal times out of the data and worked out the score as it stood at the 85th minute. Then I mixed that with the final score, 65 percent final, 35 percent the 85th-minute version. A late heartbreak and a proper beating no longer count the same.</p>
+    <p>By how much. A three-goal win counts a little more than a one-goal win.</p>
+    <p>All of these went into how much a group result moved a team's rating. And I want to be clear about one thing. I set every one of those weights by thinking about football. Not by tuning them until the score looked good. That difference is the whole game, and I hit it again at the end.</p>
+    <h2>The best thing I added: expected goals</h2>
+    <p>A scoreline lies.</p>
+    <p>A team can dominate, hit the post four times, and lose to one deflection. Another can get battered and steal a 1-0. If you rate teams on results, you are rating them partly on luck.</p>
+    <p>Expected goals fixes this. Written xG. It asks a simple question. Given the quality of the chances a team actually created, how many goals should they have scored?</p>
+    <p>It is the closest thing football has to measuring who deserved to win. I scraped it for all 94 matches.</p>
+    <p>Here is how I used it. For each game I worked out who deserved to win from the xG alone, then mixed it with the result. 55 percent xG, 45 percent what actually happened. The xG gets the bigger vote, because it is steadier and it predicts the next game better than the score does.</p>
+    <p>And it immediately told me things the table was hiding:</p>
+    <pre><code>             goals      xG        what it means
+Egypt        +2         −0.8      flattered. worse than they looked.
+Norway       +1         +2.4      underrated. better than they looked.
+Morocco      +3         +3.1      fully deserved. genuinely strong.
+Paraguay     −2         −3.0      genuinely poor.</code></pre>
+    <p>Egypt got results but their underlying numbers were negative. They had been a little lucky. Norway looked ordinary on paper but were creating far more than they scored.</p>
+    <p>Here is the payoff. When Norway later knocked Brazil out, the xG was not surprised. It had been quietly telling me Norway were underrated the whole time.</p>
+    <p>I also added one more thing. Squad quality. How good are these players, ignoring one noisy group? I looked up every player's club, checked how strong that club is, and averaged it out. A team built from top clubs is strong even if it stumbled for three games. I kept this small, because matching player names to clubs is messy.</p>
+    <h2>How I checked it was not lying to me</h2>
+    <p>The number I trust most does not come from the World Cup at all.</p>
+    <p>I trained the model only on matches before 2024. Then I tested it on 2024 and 2025 games it had never seen. It landed around 60 to 62 percent. That is the honest &quot;how good is the engine&quot; number. It cannot be gamed. And every World Cup result I report sits in that same neighbourhood, instead of magically higher. If a step had suddenly claimed 85 percent, I would have gone hunting for the leak.</p>
+    <h2>Then I predicted the knockouts blind</h2>
+    <p>This is where it got fun. Now I could test against a real future.</p>
+    <p>I froze the model's knowledge at the end of the group stage. Then I made it predict the whole knockout bracket. Round of 32 all the way to the final. Without looking at a single knockout result.</p>
+    <p>Round of 32: 14 of 16 correct.</p>
+    <p>Look at the two it missed. Germany lost to Paraguay. The Netherlands lost to Morocco. Both went to penalty shootouts.</p>
+    <p>A shootout is a coin flip that happens to involve feet. No model on Earth should claim to call one. Of the 14 games decided in normal time by the better team, I got all 14.</p>
+    <p>That is not luck. That is the ceiling. And the ceiling is honest.</p>
+    <p>The xG earned its keep here too. Remember Netherlands against Morocco. Morocco actually outplayed them, 1.38 xG to 0.24, while winning on penalties. The model saw the performance, not the shootout. It rated Morocco up. Then it correctly picked them to beat Canada in the next round.</p>
+    <h2>Rolling it forward</h2>
+    <p>As the tournament moved, I moved with it.</p>
+    <p>Use everything through the Round of 32. Predict the Round of 16 blind. Then use everything through the Round of 16, and predict the rest.</p>
+    <pre><code>groups        →  Round of 32:   14 / 16
+Round of 32   →  Round of 16:    5 / 6
+-----------------------------------------
+all together:                   19 / 22   =   86 percent</code></pre>
+    <p>Three misses across the entire knockout stage. Two penalty shootouts, and one honest upset, Norway beating Brazil in normal time. Everything the better team won on the pitch, I called.</p>
     <h2>Where it stands right now</h2>
-    <p>We take everything that has actually happened, every group game, the Round of 32, and the finished Round of 16, and simulate the rest of the bracket 20,000 times. The title is Spain's to lose. Here is the full bracket, with the model's predicted path through the games still to be played:</p>
+    <p>I take everything that has actually happened. Every group game, the Round of 32, and the finished Round of 16. I lock those in as fact. Then I simulate the rest of the bracket 20,000 times.</p>
+    <p>Here is the full bracket, with the path the model expects through the games still to be played.</p>
     <figure>
-      <img src="/assets/worldcup-ml/predicted_bracket.svg" alt="Predicted World Cup 2026 bracket" loading="lazy" />
-      <figcaption>Predicted World Cup 2026 bracket</figcaption>
+      <img src="/assets/worldcup-ml/predicted_bracket.svg" alt="The predicted World Cup 2026 bracket. Solid lines are games already played, dashed lines are the model's predictions, and the gold center is the predicted champion." loading="lazy" />
+      <figcaption>The predicted World Cup 2026 bracket. Solid lines are games already played, dashed lines are the model's predictions, and the gold center is the predicted champion.</figcaption>
     </figure>
-    <table>
-      <thead><tr><th>Team</th><th>Chance of winning it all</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Spain</strong></td><td class="num"><strong>34%</strong></td></tr>
-        <tr><td>France</td><td class="num">20%</td></tr>
-        <tr><td>Argentina</td><td class="num">18%</td></tr>
-        <tr><td>England</td><td class="num">13%</td></tr>
-        <tr><td>Norway</td><td class="num">5%</td></tr>
-      </tbody>
-    </table>
-    <p>Spain sit clear at the top because their underlying numbers — not just their results, their <em>xG</em> — were the best in the tournament. The single most likely bracket has <strong>Spain beating Argentina in the final.</strong></p>
-    <h2>The two ways to fake a perfect model (so you can spot them)</h2>
-    <p>We promised to show you the cheating. There are two tricks, and we ran both on our own model so you'd recognize them in the wild.</p>
-    <p><strong>Overfitting.</strong> Give a model far more knobs than it needs and let it memorize the training data. Its accuracy on matches it has already seen climbs toward 100% — while its accuracy on <em>new</em> matches quietly gets worse. It's not learning; it's memorizing noise and calling it skill. If someone only ever tests their model on the same data they trained it on, this is what's happening.</p>
-    <p><strong>Leakage.</strong> The purest cheat is to sneak the answer into the question. We added one input, the final goal difference of the match, and &quot;predicted&quot; the result. Accuracy: <strong>100%.</strong> Of course it was. We told it the score. Every &quot;100% accurate&quot; predictor has an input like this hiding in it, something that already contains the result: final possession, post-match player ratings, the closing betting odds. When you see a perfect model, go find which input is the answer wearing a fake moustache.</p>
-    <h2>What this was really about</h2>
-    <p>The point was never a crystal ball. It was to build something honest enough that every guess comes with a reason, and to find the exact line where reasons run out.</p>
-    <p>That line is a beautiful thing to find. We can call all 12 group winners, a perfect 100%. We can predict 86% of knockout games one round ahead. But we cannot call a penalty shootout, and we cannot break 64% on a single match, because past that line football stops being about who's better and starts being about a ball hitting the inside of a post and bouncing out. A model that knows where its own line is, one that says &quot;Spain 34%, here's why, and no I can't promise it,&quot; is worth ten models that shout a confident winner and quietly leak the score.</p>
+    <p><em>Solid lines are played. Dashed lines are predicted. Gold is the champion.</em></p>
+    <pre><code>Spain       34%
+France      20%
+Argentina   18%
+England     13%
+Norway       5%</code></pre>
+    <p>Spain sit clear on top. Not because of their results. Because of their xG, which was the best in the tournament. The single most likely path has Spain beating Argentina in the final.</p>
+    <h2>The two ways to fake a perfect model</h2>
+    <p>I promised I would show you the cheating. So I ran both tricks on my own model.</p>
+    <p>The first is overfitting. Give a model far more knobs than it needs, and let it memorize the training games. I did it on purpose. Its score on games it had already seen climbed toward the sky. Its score on new games got worse. It was not learning. It was memorizing noise and calling it skill. The tell is simple. If someone only ever tests their model on the same data they trained it on, this is what is happening.</p>
+    <p>The second is leakage. Sneak the answer into the question. I added one input, the final goal difference of the match, and asked it to &quot;predict&quot; the result.</p>
+    <p>100 percent accurate.</p>
+    <p>Of course it was. I told it the score.</p>
+    <p>Every &quot;100 percent accurate&quot; model has an input like this hiding in it. Final possession. Post-match ratings. The closing betting odds. Something that already contains the answer. When you see a perfect model, go find which input is the answer wearing a fake moustache.</p>
+    <p>This is also why I set my weights by thinking, not by tuning them until the backtest looked good. On a sample this small, tuning to the score is just leakage with extra steps.</p>
+    <h2>Where the wall is</h2>
+    <p>I never wanted a crystal ball. I wanted something honest enough that every guess comes with a reason. And I wanted to find the exact line where the reasons run out.</p>
+    <p>That line turned out to be a beautiful thing.</p>
+    <p>I can call all 12 group winners. I can call 86 percent of knockout games one round ahead. But I cannot call a penalty shootout, and I cannot beat 64 percent on a single match.</p>
+    <p>Because past that line, football stops being about who is better. It starts being about a ball hitting the inside of a post and bouncing the wrong way.</p>
+    <p>A model that knows where its own line is, one that tells you &quot;Spain, 34 percent, here is exactly why, and no I cannot promise it,&quot; is worth ten models that shout a confident winner and quietly leak the score.</p>
     <hr />
-    <p><em>Everything here is reproducible. Ratings come from decades of international results plus current strength numbers; xG for all 94 World Cup matches came from Sofascore. The code runs on nothing but Python, NumPy, and pandas. Repo, data, and the honest scoreboard are all in the project folder.</em></p>
+    <p><em>All of this runs on plain Python. The ratings come from 49,503 international matches and current national numbers. The xG for all 94 World Cup games came from Sofascore. The code, the data, and the full scoreboard are in this repo.</em></p>
     <p class="source-link">Source, data, and reproducible code: <a href="https://github.com/m-mahadi/worldcup-ml">github.com/m-mahadi/worldcup-ml</a>.</p>
   </article>
 </body>
